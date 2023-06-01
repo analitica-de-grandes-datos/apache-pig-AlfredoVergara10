@@ -33,3 +33,26 @@ $ pig -x local -f pregunta.pig
         >>> Escriba su respuesta a partir de este punto <<<
 */
 
+u = LOAD 'data.csv' USING PigStorage(',') 
+    AS (id:int, 
+        firstname:CHARARRAY, 
+        surname:CHARARRAY, 
+        birthday:CHARARRAY, 
+        color:CHARARRAY, 
+        quantity:INT);
+
+
+-- Obtener los valores de la columna surname.
+words = FOREACH u GENERATE surname;
+
+-- Ordenar los valores en orden alfabético.
+ordered = ORDER words BY $0;
+
+-- Obtener los valores de la columna surname y su representación en mayúsculas y en minúsculas.
+values = FOREACH ordered GENERATE $0, UPPER($0), LOWER($0);
+
+-- Escribir el archivo de salida delimitado por un comas.
+STORE values INTO 'output' USING PigStorage (',');
+
+-- Copiar los archivos del HDFS al sistema local.
+fs -get output/ .
