@@ -32,3 +32,20 @@ $ pig -x local -f pregunta.pig
         >>> Escriba su respuesta a partir de este punto <<<
 */
 
+-- Cargar el archivo de datos.
+data = LOAD 'data.csv' USING PigStorage(',')
+    AS (id:INT,
+        firstname:CHARARRAY,
+        surname:CHARARRAY,
+        birtday:DATETIME,
+        color:CHARARRAY,
+        quantity:INT);
+
+-- Obtener los valores de la columna firstname y los de la columna surname.
+values = FOREACH data GENERATE firstname, surname;
+
+-- Escribir el archivo de salida delimitado por un "@".
+STORE values INTO 'output' USING PigStorage ('@');
+
+-- Copiar los archivos del HDFS al sistema local.
+fs -get output/ .
