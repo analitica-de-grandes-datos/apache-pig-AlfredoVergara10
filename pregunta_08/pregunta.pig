@@ -17,3 +17,23 @@ $ pig -x local -f pregunta.pig
         >>> Escriba su respuesta a partir de este punto <<<
 */
 
+-- Cargar el archivo de datos.
+data = LOAD 'data.tsv' USING PigStorage('\t')
+    AS (col1:CHARARRAY,
+        col2:BAG{t:TUPLE(p:CHARARRAY)},
+        col3:MAP[]);
+
+-- Obtener los elementos de los valores en la columna 2 y la columna 3 en forma de tupla.
+values = FOREACH data GENERATE FLATTEN(col2), FLATTEN(KEYSET(col3));
+
+-- Agrupar los elementos por tupla generada.
+grouped = GROUP values BY ($0,$1);
+
+-- Contar el número de coincidencias.
+counts = FOREACH grouped GENERATE $0, COUNT($1);
+
+-- Escribir el archivo de salida.
+STORE counts INTO 'output';
+
+-- Copiar los archivos del HDFS al sistema local.
+fs -get output/ .
