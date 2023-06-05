@@ -34,3 +34,43 @@ $ pig -x local -f pregunta.pig
         >>> Escriba su respuesta a partir de este punto <<<
 */
 
+u = LOAD 'data.csv' USING PigStorage(',') 
+    AS (id:int, 
+        firstname:CHARARRAY, 
+        surname:CHARARRAY, 
+        birthday:CHARARRAY, 
+        color:CHARARRAY, 
+        quantity:INT);
+
+
+-- Obtener los años de los valores de la columna birthday y además su conversión a formato DATETIME.
+dates = FOREACH u GENERATE ToDate(birthday, 'y-M-d');
+
+-- Obtener los valores de la columna birthday junto con distintas representaciones del día.
+values = FOREACH dates GENERATE ToString($0, 'YYYY-MM-dd'), ToString($0, 'dd'), GetDay($0), (
+    CASE ToString($0, 'E')
+        WHEN 'Mon' THEN 'lun'
+        WHEN 'Tue' THEN 'mar'
+        WHEN 'Wed' THEN 'mie'
+        WHEN 'Thu' THEN 'jue'
+        WHEN 'Fri' THEN 'vie'
+        WHEN 'Sat' THEN 'sab'
+        WHEN 'Sun' THEN 'dom'
+    END
+), (
+    CASE ToString($0, 'E')
+        WHEN 'Mon' THEN 'lunes'
+        WHEN 'Tue' THEN 'martes'
+        WHEN 'Wed' THEN 'miercoles'
+        WHEN 'Thu' THEN 'jueves'
+        WHEN 'Fri' THEN 'viernes'
+        WHEN 'Sat' THEN 'sabado'
+        WHEN 'Sun' THEN 'domingo'
+    END
+);
+
+-- Escribir el archivo de salida delimitado por comas.
+STORE values INTO 'output' USING PigStorage (',');
+
+-- Copiar los archivos del HDFS al sistema local.
+fs -get output/ .
