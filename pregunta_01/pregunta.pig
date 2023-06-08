@@ -27,7 +27,7 @@ groups = GROUP data BY col1;
 counts = FOREACH groups GENERATE $0, COUNT($1);
 
 -- Escribir el archivo de salida.
-STORE counts INTO 'output';
+STORE counts INTO output;
 
 -- Copiar los archivos del HDFS al sistema local.
 fs -get output/ .
