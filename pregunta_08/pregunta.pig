@@ -18,7 +18,7 @@ $ pig -x local -f pregunta.pig
 */
 
 -- Cargar el archivo de datos.
-data = LOAD 'data.tsv' USING PigStorage('\t')
+data = LOAD 'data.tsv' USING PigStorage(',')
     AS (col1:CHARARRAY,
         col2:BAG{t:TUPLE(p:CHARARRAY)},
         col3:MAP[]);
