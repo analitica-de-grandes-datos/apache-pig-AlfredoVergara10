@@ -15,7 +15,7 @@ $ pig -x local -f pregunta.pig
 
 
 -- Cargar el archivo de datos.
-data = LOAD 'data.tsv' USING PigStorage(',')
+data = LOAD 'data.tsv' USING PigStorage('\t')
     AS (col1:CHARARRAY,
         col2:DATETIME,
         col3:INT);

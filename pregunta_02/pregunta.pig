@@ -13,7 +13,6 @@ $ pig -x local -f pregunta.pig
      >>> Escriba el codigo del mapper a partir de este punto <<<
 */
 
-
 -- Cargar el archivo de datos.
 data = LOAD 'data.tsv' USING PigStorage('\t')
     AS (col1:CHARARRAY,

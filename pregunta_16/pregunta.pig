@@ -28,13 +28,15 @@ u = LOAD 'data.csv' USING PigStorage(',')
         birthday:CHARARRAY, 
         color:CHARARRAY, 
         quantity:INT);
-
+--
+-- >>> Escriba su respuesta a partir de este punto <<<
+--
 
 -- Obtener los valores de la columna firstname y la columna color.
 words = FOREACH u GENERATE firstname, color;
 
--- Filtrar los valores por aquellos donde firstname empieza por la letra "K" o color coincide con "blue".
-values = FILTER words BY $0 MATCHES 'K.*' OR $1 MATCHES 'blue';
+-- Filtrar los valores por aquellos donde color coincide con "blue" o "black".
+values = FILTER words BY $1 MATCHES 'blue' OR $1 MATCHES 'black';
 
 -- Escribir el archivo de salida delimitado por comas.
 STORE values INTO 'output' USING PigStorage (',');

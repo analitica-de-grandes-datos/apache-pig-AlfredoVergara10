@@ -29,7 +29,9 @@ u = LOAD 'data.csv' USING PigStorage(',')
         birthday:CHARARRAY, 
         color:CHARARRAY, 
         quantity:INT);
-
+--
+-- >>> Escriba su respuesta a partir de este punto <<<
+--
 
 -- Obtener los valores de la columna firstname y la columna color.
 words = FOREACH u GENERATE firstname, color;
