@@ -26,7 +26,7 @@ $ pig -x local -f pregunta.pig
 data = LOAD 'data.csv' USING PigStorage(',') AS (col1: chararray, col2: chararray, col3: chararray);
 
 -- Paso 2: Filtrar los registros donde el color comienza con 'b'
-filtered_data = FILTER data BY col3 MATCHES 'b.*';
+filtered_data = FILTER data BY col3 MATCHES 'b%';
 
 -- Paso 3: Proyectar solo la columna de color
 color_result = FOREACH filtered_data GENERATE col3 AS color;
