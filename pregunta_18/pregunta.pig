@@ -20,17 +20,16 @@ $ pig -x local -f pregunta.pig
 
         /* >>> Escriba su respuesta a partir de este punto <<< */
 */
-
--- Leer archivo
+-- Paso 1: Leer archivo
 data = LOAD 'data.csv' USING PigStorage(',') AS (col1: int, firstname: chararray, lastname: chararray, birthdate: chararray, color: chararray, col6: int);
 
--- Filtrar los registros que cumplen con la condición WHERE
+-- Paso 2: Filtrar los registros que cumplen con la condición WHERE
 filtered_data = FILTER data BY NOT color IN ('blue', 'black');
 
--- Proyectar las columnas firstname y color
+-- Paso 3: Proyectar las columnas firstname y color
 result = FOREACH filtered_data GENERATE firstname, color;
 
--- Escribir resultado en carpeta "output"
+-- Paso 4: Escribir resultado en carpeta "output"
 STORE result INTO 'output' USING PigStorage(',');
 
 -- Mostrar resultado

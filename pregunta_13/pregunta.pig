@@ -22,16 +22,16 @@ $ pig -x local -f pregunta.pig
         /* >>> Escriba su respuesta a partir de este punto <<< */
 */
 
--- Leer archivo
+-- Paso 1: Leer archivo
 data = LOAD 'data.csv' USING PigStorage(',') AS (col1: chararray, col2: chararray, col3: chararray);
 
--- Filtrar los registros donde el color comienza con 'b'
+-- Paso 2: Filtrar los registros donde el color comienza con 'b'
 filtered_data = FILTER data BY col3 MATCHES 'b.*';
 
--- Proyectar solo la columna de color
+-- Paso 3: Proyectar solo la columna de color
 color_result = FOREACH filtered_data GENERATE col3 AS color;
 
--- Escribir resultado en carpeta "output"
+-- Paso 4: Escribir resultado en carpeta "output"
 STORE color_result INTO 'output' USING PigStorage(',');
 
 -- Mostrar resultado
