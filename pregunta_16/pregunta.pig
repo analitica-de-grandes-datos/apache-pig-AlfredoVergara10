@@ -33,5 +33,3 @@ result = FOREACH filtered_data GENERATE firstname, color;
 -- Paso 4: Escribir resultado en carpeta "output"
 STORE result INTO 'output' USING PigStorage(',');
 
--- Mostrar resultado
-rm -rf output/
