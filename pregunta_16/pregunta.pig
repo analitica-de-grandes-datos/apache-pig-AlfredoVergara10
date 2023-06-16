@@ -25,7 +25,7 @@ $ pig -x local -f pregunta.pig
 data = LOAD 'data.csv' USING PigStorage(',') AS (col1: int, firstname: chararray, lastname: chararray, birthdate: chararray, color: chararray, col6: int);
 
 -- Paso 2: Filtrar los registros que cumplen con las condiciones WHERE
-filtered_data = FILTER data BY color == 'blue' OR firstname MATCHES 'K.*';
+filtered_data = FILTER data BY color == 'blue' OR firstname MATCHES '^K.*';
 
 -- Paso 3: Proyectar las columnas firstname y color
 result = FOREACH filtered_data GENERATE firstname, color;
