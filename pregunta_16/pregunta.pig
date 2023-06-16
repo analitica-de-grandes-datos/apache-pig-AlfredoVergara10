@@ -31,7 +31,7 @@ filtered_data = FILTER data BY color == 'blue' OR firstname MATCHES 'K.*';
 result = FOREACH filtered_data GENERATE firstname, color;
 
 -- Paso 4: Escribir resultado en carpeta "output"
-STORE result INTO 'output' USING PigStorage(' ');
+STORE result INTO 'output' USING PigStorage(',');
 
 -- Mostrar resultado
-DUMP result;
+rm -rf output/
