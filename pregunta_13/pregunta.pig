@@ -33,6 +33,3 @@ color_result = FOREACH filtered_data GENERATE col3 AS color;
 
 -- Escribir resultado en carpeta "output"
 STORE color_result INTO 'output' USING PigStorage(',');
-
--- Mostrar resultado
-fs -get output/ .
