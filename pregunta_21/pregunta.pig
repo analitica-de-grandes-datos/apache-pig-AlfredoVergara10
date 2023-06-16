@@ -22,25 +22,17 @@ $ pig -x local -f pregunta.pig
         >>> Escriba su respuesta a partir de este punto <<<
 */
 
-u = LOAD 'data.csv' USING PigStorage(',') 
-    AS (id:int, 
-        firstname:CHARARRAY, 
-        surname:CHARARRAY, 
-        birthday:CHARARRAY, 
-        color:CHARARRAY, 
-        quantity:INT);
---
--- >>> Escriba su respuesta a partir de este punto <<<
---
+-- Leer archivo
+data = LOAD 'data.csv' USING PigStorage(',') AS (col1: int, firstname: chararray, lastname: chararray, birthdate: chararray, color: chararray, col6: int);
 
--- Obtener los valores de la columna firstname y la columna color.
-words = FOREACH u GENERATE firstname, color;
+-- Filtrar los registros que cumplen con la condición WHERE
+filtered_data = FILTER data BY color MATCHES 'blue|green';
 
--- Filtrar los valores por aquellos donde color coincide con la expresión regular "blue|green".
-values = FILTER words BY $1 MATCHES '(blue|green).*';
+-- Proyectar las columnas firstname y color
+result = FOREACH filtered_data GENERATE firstname, color;
 
--- Escribir el archivo de salida.
-STORE values INTO 'output';
+-- Escribir resultado en carpeta "output"
+STORE result INTO 'output' USING PigStorage(',');
 
--- Copiar los archivos del HDFS al sistema local.
-fs -get output/ .
+-- Mostrar resultado
+DUMP result;

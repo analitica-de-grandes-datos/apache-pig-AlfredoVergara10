@@ -20,25 +20,17 @@ $ pig -x local -f pregunta.pig
 
 */
 
-u = LOAD 'data.csv' USING PigStorage(',') 
-    AS (id:int, 
-        firstname:CHARARRAY, 
-        surname:CHARARRAY, 
-        birthday:CHARARRAY, 
-        color:CHARARRAY, 
-        quantity:INT);
---
--- >>> Escriba su respuesta a partir de este punto <<<
---
+-- Leer archivo
+data = LOAD 'data.csv' USING PigStorage(',') AS (col1: int, firstname: chararray, lastname: chararray, birthdate: chararray, color: chararray, col6: int);
 
--- Obtener los valores de la columna firstname y la columna color.
-words = FOREACH u GENERATE firstname, color;
+-- Filtrar los registros que cumplen con las condiciones WHERE
+filtered_data = FILTER data BY color == 'blue' AND firstname MATCHES '^Z.*';
 
--- Filtrar los valores por aquellos donde firstname empieza por la letra "Z" y color coincide con "blue".
-values = FILTER words BY $0 MATCHES 'Z.*' AND $1 MATCHES 'blue';
+-- Proyectar las columnas firstname y color
+result = FOREACH filtered_data GENERATE firstname, color;
 
--- Escribir el archivo de salida.
-STORE values INTO 'output';
+-- Escribir resultado en carpeta "output"
+STORE result INTO 'output' USING PigStorage(' ');
 
--- Copiar los archivos del HDFS al sistema local.
-fs -get output/ .
+-- Mostrar resultado
+DUMP result;

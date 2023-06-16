@@ -13,23 +13,18 @@ $ pig -x local -f pregunta.pig
         >>> Escriba su respuesta a partir de este punto <<<
 */
 
--- Cargar el archivo de datos.
-data = LOAD 'data.tsv' USING PigStorage('\t')
-    AS (col1:CHARARRAY,
-        col2:BAG{t:TUPLE(p:CHARARRAY)},
-        col3:MAP[]);
+-- Carga el archivo TSV
+data = LOAD 'data.tsv' USING PigStorage('\t') AS (col1: chararray, col2: bag{t: tuple(letter: chararray)}, col3: chararray);
 
--- Obtener los valores de los elementos de la columna 2.
-flatted = FOREACH data GENERATE FLATTEN(col2);
+-- Genera un registro para cada letra en la columna 2
+letters = FOREACH data GENERATE FLATTEN(col2) as letter;
 
--- Agrupar los registros por los valores en la columna 2.
-groups = GROUP flatted BY $0;
+-- Agrupa los registros por letra y cuenta la cantidad de ocurrencias
+letter_counts = GROUP letters BY letter;
+letter_counts = FOREACH letter_counts GENERATE group AS letter, COUNT(letters) AS count;
 
--- Contar la cantidad de registros por cada valor.
-values = FOREACH groups GENERATE $0, COUNT($1);
+-- Almacena los resultados en formato CSV
+STORE letter_counts INTO 'output' USING PigStorage(',');
 
--- Escribir el archivo de salida.
-STORE values INTO 'output';
-
--- Copiar los archivos del HDFS al sistema local.
-fs -get output/ .
+-- Muestra los resultados en la consola
+DUMP letter_counts;

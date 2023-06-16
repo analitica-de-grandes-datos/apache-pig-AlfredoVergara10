@@ -29,32 +29,14 @@ $ pig -x local -f pregunta.pig
          >>> Escriba su respuesta a partir de este punto <<<
 */
 
--- Cargar el archivo de datos.
-data = LOAD 'truck_event_text_partition.csv' USING PigStorage(',')
-    AS (driverId:INT,
-        truckId:INT,
-        eventTime:CHARARRAY,
-        eventType:CHARARRAY,
-        longitude:DOUBLE,
-        latitude:DOUBLE,
-        eventKey:CHARARRAY,
-        correlationId:CHARARRAY,
-        driverName:CHARARRAY,
-        routeId:LONG,
-        routeName:CHARARRAY,
-        eventDate:CHARARRAY);
+-- Obtén los primeros 10 registros para las primeras tres columnas
+result = FOREACH (LIMIT data 10) GENERATE driverId, truckId, eventTime;
 
--- Obtener sólo los primeros 10 valores.
-limited = LIMIT data 10;
+-- Ordena los resultados por driverId, truckId y eventTime
+sorted_result = ORDER result BY driverId, truckId, eventTime;
 
--- Ordenar los registros por los valores en la columna driverId, truckId y eventTime.
-ordered = ORDER limited BY driverId, truckId, eventTime;
+-- Almacena los resultados en formato CSV
+STORE sorted_result INTO 'output' USING PigStorage(',');
 
--- Obtener sólo los valores de las primeras tres columnas.
-values = FOREACH ordered GENERATE $0, $1, $2;
-
--- Escribir el archivo de salida delimitado por comas.
-STORE values INTO 'output' USING PigStorage (',');
-
--- Copiar los archivos del HDFS al sistema local.
-fs -get output/ .
+-- Muestra los resultados en la consola
+DUMP sorted_result;

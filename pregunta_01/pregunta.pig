@@ -14,20 +14,17 @@ $ pig -x local -f pregunta.pig
 */
 
 
--- Cargar el archivo de datos.
-data = LOAD 'data.tsv' USING PigStorage('\t')
-    AS (col1:CHARARRAY,
-        col2:DATETIME,
-        col3:INT);
+-- Carga el archivo TSV
+data = LOAD 'data.tsv' USING PigStorage('\t') AS (col1: chararray, col2: chararray);
 
--- Agrupar los registros por los valores en la columna 1.
-groups = GROUP data BY col1;
+-- Agrupa los registros por letra
+grouped_data = GROUP data BY SUBSTRING(col1, 0, 1);
 
--- Contar la cantidad de registros por valor.
-counts = FOREACH groups GENERATE $0, COUNT($1);
+-- Calcula la cantidad de registros por letra
+count_data = FOREACH grouped_data GENERATE group AS letter, COUNT(data) AS count;
 
--- Escribir el archivo de salida.
-STORE counts INTO 'output';
+-- Almacena los resultados en formato CSV
+STORE count_data INTO 'output' USING PigStorage(',');
 
--- Copiar los archivos del HDFS al sistema local.
-fs -get output/ .
+-- Muestra los resultados en la consola
+DUMP count_data;

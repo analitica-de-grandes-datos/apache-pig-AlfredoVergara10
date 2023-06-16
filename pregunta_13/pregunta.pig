@@ -22,25 +22,17 @@ $ pig -x local -f pregunta.pig
         /* >>> Escriba su respuesta a partir de este punto <<< */
 */
 
-u = LOAD 'data.csv' USING PigStorage(',') 
-    AS (id:int, 
-        firstname:CHARARRAY, 
-        surname:CHARARRAY, 
-        birthday:CHARARRAY, 
-        color:CHARARRAY, 
-        quantity:INT);
---
--- >>> Escriba su respuesta a partir de este punto <<<
---
+-- Leer archivo
+data = LOAD 'data.csv' USING PigStorage(',') AS (col1: chararray, col2: chararray, col3: chararray);
 
--- Obtener los valores de la columna color.
-words = FOREACH u GENERATE color;
+-- Filtrar los registros donde el color comienza con 'b'
+filtered_data = FILTER data BY col3 MATCHES 'b.*';
 
--- Filtrar los valores por aquellos que empiezan por la letra "b".
-values = FILTER words BY $0 MATCHES 'b.*';
+-- Proyectar solo la columna de color
+color_result = FOREACH filtered_data GENERATE col3 AS color;
 
--- Escribir el archivo de salida.
-STORE values INTO 'output';
+-- Escribir resultado en carpeta "output"
+STORE color_result INTO 'output' USING PigStorage(',');
 
--- Copiar los archivos del HDFS al sistema local.
-fs -get output/ .
+-- Mostrar resultado
+DUMP color_result;
